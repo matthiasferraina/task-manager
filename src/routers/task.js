@@ -43,18 +43,19 @@ router.patch("/tasks/:id", async(req, res) => {
     );
 
     if (!validOperation) {
-        return res.status(401).send({ error: 'Invalid update !' });
+        return res.status(401).send({ error: "Invalid update !" });
     }
 
     try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
+        const task = await Task.findById(req.params.id);
 
         if (!task) {
             return res.status(404).send();
         }
+
+        updateFields.forEach(field => (task[field] = req.body[field]));
+
+        await task.save();
 
         res.send(task);
     } catch (e) {
@@ -62,19 +63,18 @@ router.patch("/tasks/:id", async(req, res) => {
     }
 });
 
-router.delete('/tasks/:id', async(req, res) => {
+router.delete("/tasks/:id", async(req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id)
+        const task = await Task.findByIdAndDelete(req.params.id);
 
         if (!task) {
-            return res.status(404).send()
+            return res.status(404).send();
         }
 
-        res.send(task)
-
+        res.send(task);
     } catch (error) {
         res.status(400).send(e);
     }
-})
+});
 
 module.exports = router;
