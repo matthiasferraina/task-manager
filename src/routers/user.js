@@ -51,35 +51,12 @@ router.post("/users/logoutAll", auth, async(req, res) => {
         res.status(500).send();
     }
 });
-// router.get("/users", auth, async(req, res) => {
-//     try {
-//         const users = await User.find({});
-//         res.send(users);
-//     } catch (error) {
-//         res.status(500).send(error);
-//     }
-// });
 
 router.get("/users/me", auth, async(req, res) => {
     res.send(req.user);
 });
 
-router.get("/users/:id", async(req, res) => {
-    const _id = req.params.id;
-
-    try {
-        const user = await User.findById(_id);
-        if (!user) {
-            return res.status(404).send();
-        }
-
-        res.send(user);
-    } catch (error) {
-        res.status(500).send(err);
-    }
-});
-
-router.patch("/users/:id", async(req, res) => {
+router.patch("/users/me", auth, async(req, res) => {
     const updateFields = Object.keys(req.body);
     const acceptedFields = ["name", "age", "email", "password"];
     const validOperation = updateFields.every(field =>
@@ -91,32 +68,22 @@ router.patch("/users/:id", async(req, res) => {
     }
 
     try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).send();
-        }
+        updateFields.forEach(field => (req.user[field] = req.body[field]));
 
-        updateFields.forEach(field => (user[field] = req.body[field]));
+        await req.user.save();
 
-        await user.save();
-
-        res.send(user);
+        res.send(req.user);
     } catch (e) {
         res.status(400).send(e);
     }
 });
 
-router.delete("/users/:id", async(req, res) => {
+router.delete("/users/me", auth, async(req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id);
-
-        if (!user) {
-            return res.status(404).send();
-        }
-
-        res.send(user);
+        await req.user.remove();
+        res.send(req.user);
     } catch (error) {
-        res.status(400).send(e);
+        res.status(400).send(error);
     }
 });
 
