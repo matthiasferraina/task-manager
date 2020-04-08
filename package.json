@@ -5,7 +5,11 @@
     "main": "index.js",
     "scripts": {
         "dev": "env-cmd -r ./config/.env-cmdrc.json -e dev nodemon src/index.js",
-        "start": "node src/index.js"
+        "start": "env-cmd -r ./config/.env-cmdrc.json -e test node src/index.js",
+        "test": "jest --watch"
+    },
+    "jest": {
+        "testEnvironment": "node"
     },
     "keywords": [],
     "author": "",
@@ -23,6 +27,7 @@
     },
     "devDependencies": {
         "env-cmd": "^10.1.0",
+        "jest": "^25.2.7",
         "nodemon": "^2.0.2"
     }
 }
