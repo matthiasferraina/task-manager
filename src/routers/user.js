@@ -68,7 +68,7 @@ router.patch("/users/me", auth, async(req, res) => {
     );
 
     if (!validOperation) {
-        return res.status(401).send({ error: "Invalid update !" });
+        return res.status(400).send({ error: "Invalid update !" });
     }
 
     try {
@@ -94,7 +94,7 @@ router.delete("/users/me", auth, async(req, res) => {
 
 const upload = multer({
     limits: {
-        fileSize: 100000
+        fileSize: 1000000
     },
     fileFilter(req, file, cb) {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
@@ -111,7 +111,7 @@ router.post(
     upload.single("upload"),
     async(req, res) => {
         const buffer = await sharp(req.file.buffer)
-            .resize({ width: 150, eight: 150 })
+            .resize({ width: 150, height: 150 })
             .png()
             .toBuffer();
         req.user.avatar = buffer;

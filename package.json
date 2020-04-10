@@ -10,7 +10,8 @@
         "local-mongo": "start mongod --dbpath='C:/Users/ferra/mongodb-data'"
     },
     "jest": {
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "roots": ["./tests/"]
     },
     "keywords": [],
     "author": "",

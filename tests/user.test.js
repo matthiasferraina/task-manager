@@ -53,11 +53,8 @@ test("Should login existing user", async() => {
         })
         .expect(200);
 
-    const user = await User.findById(
-        response.body.user._id
-    );
-    expect(response.body.token).toBe(user.tokens[1].token)
-
+    const user = await User.findById(response.body.user._id);
+    expect(response.body.token).toBe(user.tokens[1].token);
 });
 
 test("Should not login existing user", async() => {
@@ -89,10 +86,54 @@ test("should delete account for user", async() => {
         .send()
         .expect(200);
 
-    const user = await User.findById(response.body._id)
-    expect(user).toBeNull()
+    const user = await User.findById(response.body._id);
+    expect(user).toBeNull();
 });
 
 test("should not delete account for user", async() => {
     await request(app).delete("/users/me").send().expect(401);
+});
+
+test("Should not upload avatar image", async() => {
+    await request(app)
+        .post("/users/me/avatar")
+        .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+        .attach("upload", "./tests/fixtures/coree-du-sud-ville.jpg")
+        .expect(400);
+});
+
+test("Should upload avatar image", async() => {
+    await request(app)
+        .post("/users/me/avatar")
+        .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+        .attach(
+            "upload",
+            "./tests/fixtures/Why-is-the-world-obsessed-with-all-things-Korean.jpg"
+        )
+        .expect(200);
+
+    const user = await User.findById(userOneId);
+    expect(user.avatar).toEqual(expect.any(Buffer));
+});
+
+test("Should update username", async() => {
+    const response = await request(app)
+        .patch("/users/me")
+        .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+        .send({
+            name: "matthias",
+        })
+        .expect(200);
+
+    expect(response.body.name).toBe("matthias");
+});
+
+test("Should not update username", async() => {
+    const response = await request(app)
+        .patch("/users/me")
+        .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+        .send({
+            names: "fezfe",
+        })
+        .expect(400);
 });
