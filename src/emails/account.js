@@ -18,7 +18,7 @@ const sendCancelationEmail = (email, name) => {
             to: email,
             from: "ferraina.matthias@gmail.com",
             subject: "Mais non il ne faut pas partir !",
-            text: `Bha alors ${name}? Pourquoi nous quitte tu ? :( . On compte sur toi pour nous dire tout ce qui n'a pas été, on alors ce sur quoi on peut s'améliorer.`
+            text: `Bha alors ${name}? Pourquoi nous quittes-tu ? :( . On compte sur toi pour nous dire tout ce qui n'a pas été, on alors ce sur quoi on peut s'améliorer.`
         })
 }
 
